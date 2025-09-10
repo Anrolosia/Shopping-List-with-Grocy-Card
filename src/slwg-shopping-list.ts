@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { property } from 'lit/decorators.js';
-import { ProductConfig, compare_deep, get_products } from './helpers';
+import { ProductConfig, compare_deep, get_products, slwgCheckMissingDeps, slwgRenderDepsErrorCard, SLWG_REQUIRED_CARDS, SlwgDep } from './helpers';
 
 interface LovelaceRowConfig {
   entity?: string;
@@ -13,6 +13,7 @@ class ShoppingListWithGrocyShoppingListCard extends LitElement {
   @property() _config;
   @property() hass: any;
   @property() card;
+  @property() _missingDeps: SlwgDep[] = [];
 
   _entities: EntityList;
   _cardsEntities: CardList;
@@ -35,6 +36,7 @@ class ShoppingListWithGrocyShoppingListCard extends LitElement {
     if (!config) {
       throw new Error('No configuration.');
     }
+    this._missingDeps = slwgCheckMissingDeps(SLWG_REQUIRED_CARDS);
     if (config.hasOwnProperty('use_collapsable_card')) {
       if (config.use_collapsable_card) {
         if (config.hasOwnProperty('tap_action')) {
@@ -301,6 +303,9 @@ class ShoppingListWithGrocyShoppingListCard extends LitElement {
     return this;
   }
   render() {
+    if (this._missingDeps?.length) {
+      return slwgRenderDepsErrorCard(this._missingDeps);
+    }
     return html`${this.card}`;
   }
 
