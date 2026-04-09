@@ -1,45 +1,47 @@
 // ----------------------- Dependency Helper (FR/EN) --------------------------
-import { html, TemplateResult } from "lit";
+import { html, TemplateResult } from 'lit';
 
 export type SlwgDep = { tag: string; label: string; link?: string };
 
 export const SLWG_REQUIRED_CARDS: SlwgDep[] = [
-  { tag: "button-card",         label: "Button Card by @RomRider", link: "https://github.com/custom-cards/button-card"},
-  { tag: "layout-card",         label: "Layout Card by @thomasloven", link: "https://github.com/thomasloven/lovelace-layout-card"},
-  { tag: "collapsable-cards",   label: "Collapsable Cards by @RossMcMillan92", link: "https://github.com/RossMcMillan92/lovelace-collapsable-cards"},
-  { tag: "bootstrap-grid-card", label: "Bootstrap Grid Card by @ownbee", link: "https://github.com/ownbee/bootstrap-grid-card"},
+  { tag: 'button-card', label: 'Button Card by @RomRider', link: 'https://github.com/custom-cards/button-card' },
+  {
+    tag: 'layout-card',
+    label: 'Layout Card by @thomasloven',
+    link: 'https://github.com/thomasloven/lovelace-layout-card',
+  },
+  {
+    tag: 'collapsable-cards',
+    label: 'Collapsable Cards by @RossMcMillan92',
+    link: 'https://github.com/RossMcMillan92/lovelace-collapsable-cards',
+  },
+  {
+    tag: 'bootstrap-grid-card',
+    label: 'Bootstrap Grid Card by @ownbee',
+    link: 'https://github.com/ownbee/bootstrap-grid-card',
+  },
 ];
 
 /**
  * Returns the list of missing dependencies (custom elements not registered).
  * Also logs a compact console report for troubleshooting.
  */
-export function slwgCheckMissingDeps(
-  deps: SlwgDep[] = SLWG_REQUIRED_CARDS
-): SlwgDep[] {
+export function slwgCheckMissingDeps(deps: SlwgDep[] = SLWG_REQUIRED_CARDS): SlwgDep[] {
   // Graceful guard if customElements is not available for any reason
   const ce = (globalThis as any)?.customElements;
   if (!ce?.get) {
-    console.warn(
-      "Shopping-List-with-Grocy-Card: customElements API not available; " +
-      "dependency check skipped."
-    );
+    console.warn('Shopping-List-with-Grocy-Card: customElements API not available; ' + 'dependency check skipped.');
     return [];
   }
 
-  const missing = deps.filter(d => !ce.get(d.tag));
+  const missing = deps.filter((d) => !ce.get(d.tag));
 
   if (missing.length) {
-    console.group(
-      "%cShopping-List-with-Grocy-Card: Missing dependencies",
-      "color:#b00;font-weight:bold;"
-    );
+    console.group('%cShopping-List-with-Grocy-Card: Missing dependencies', 'color:#b00;font-weight:bold;');
     for (const m of missing) {
       console.error(`Missing dependency -> <${m.tag}>  |  ${m.label}  |  ${m.link}`);
     }
-    console.info(
-      "Install via HACS (recommended) or add as Lovelace resources, then reload the UI."
-    );
+    console.info('Install via HACS (recommended) or add as Lovelace resources, then reload the UI.');
     console.groupEnd();
   }
 
@@ -59,12 +61,20 @@ export function slwgRenderDepsErrorCard(missing: SlwgDep[]): TemplateResult {
         border-left: 4px solid var(--error-color, #db4437);
         padding: 12px 16px;
       }
-      .slwg-title { font-weight: 600; margin-bottom: 6px; }
-      .slwg-sub   { color: var(--secondary-text-color); margin-bottom: 8px; }
-      .slwg-code  {
-        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      .slwg-title {
+        font-weight: 600;
+        margin-bottom: 6px;
       }
-      .slwg-list { line-height: 1.4; }
+      .slwg-sub {
+        color: var(--secondary-text-color);
+        margin-bottom: 8px;
+      }
+      .slwg-code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+      }
+      .slwg-list {
+        line-height: 1.4;
+      }
     </style>
 
     <ha-card class="slwg-error">
@@ -72,17 +82,14 @@ export function slwgRenderDepsErrorCard(missing: SlwgDep[]): TemplateResult {
       <div class="slwg-sub">Missing dependencies</div>
 
       <div class="slwg-list">
-        ${missing.map(m => html`<div>• &lt;${m.tag}&gt; — <a href="${m.link}" target="_blank">${m.label}</a></div>`)}
+        ${missing.map((m) => html`<div>• &lt;${m.tag}&gt; — <a href="${m.link}" target="_blank">${m.label}</a></div>`)}
       </div>
 
       <br />
-      <div>
-        Install via HACS (recommended) or add as Lovelace resources, then reload the UI.
-      </div>
+      <div>Install via HACS (recommended) or add as Lovelace resources, then reload the UI.</div>
     </ha-card>
   `;
 }
-
 
 export interface ProductConfig {
   entity_id: string;

@@ -1,6 +1,14 @@
 import { LitElement, html, css } from 'lit';
 import { property } from 'lit/decorators.js';
-import { ProductConfig, compare_deep, get_products, slwgCheckMissingDeps, slwgRenderDepsErrorCard, SLWG_REQUIRED_CARDS, SlwgDep } from './helpers';
+import {
+  ProductConfig,
+  compare_deep,
+  get_products,
+  slwgCheckMissingDeps,
+  slwgRenderDepsErrorCard,
+  SLWG_REQUIRED_CARDS,
+  SlwgDep,
+} from './helpers';
 
 interface LovelaceRowConfig {
   entity?: string;
