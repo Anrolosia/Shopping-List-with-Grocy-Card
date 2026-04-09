@@ -128,27 +128,27 @@ bump-major:
 release: lint build bump-patch
 	$(eval V := $(_version))
 	@echo "--- Releasing v$(V)"
-	git add $(PACKAGE) $(DIST)
+	git add $(PACKAGE)
 	git commit -m "chore(release): prepare for v$(V)"
 	git tag -a "v$(V)" -m "Release v$(V)"
 	git push && git push --tags
-	@echo "Released v$(V) ✓"
+	@echo "Released v$(V) ✓  (CI will build and attach the JS asset)"
 
 .PHONY: release-minor
 release-minor: lint build bump-minor
 	$(eval V := $(_version))
 	@echo "--- Releasing v$(V)"
-	git add $(PACKAGE) $(DIST)
+	git add $(PACKAGE)
 	git commit -m "chore(release): prepare for v$(V)"
 	git tag -a "v$(V)" -m "Release v$(V)"
 	git push && git push --tags
-	@echo "Released v$(V) ✓"
+	@echo "Released v$(V) ✓  (CI will build and attach the JS asset)"
 
 .PHONY: release-major
 release-major: lint build bump-major
 	$(eval V := $(_version))
 	@echo "--- Releasing v$(V)"
-	git add $(PACKAGE) $(DIST)
+	git add $(PACKAGE)
 	git commit -m "chore(release): prepare for v$(V)"
 	git tag -a "v$(V)" -m "Release v$(V)"
 	git push && git push --tags
