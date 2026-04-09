@@ -89,7 +89,7 @@ format:
 	@echo "--- prettier write"
 	npx prettier --write "src/**/*.{ts,js}"
 	@echo "--- eslint fix"
-	npm run lint-fix
+	npx eslint src/*.ts --fix
 
 # ── Build ────────────────────────────────────────────────────
 
