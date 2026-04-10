@@ -120,6 +120,85 @@ class ShoppingListWithGrocyShoppingListCard extends LitElement {
 
     const productArray = get_products(states, this._config, true);
 
+    if (this._config.hasOwnProperty('group_by') && this._config.group_by !== '') {
+      // group_by active — wrap each group in a collapsable-cards with the group name as title
+      let default_open = true;
+      Object.entries(productArray).map((entry) => {
+        const group_name = entry[0];
+        const group_entities = entry[1] as ProductConfig[];
+        const group_cards = [];
+
+        Object.values(group_entities).map((entity: ProductConfig) => {
+          const tap_action = JSON.parse(JSON.stringify(this._config.tap_action));
+          this.findAndReplace(tap_action, '[PRODUCT_ID]', entity.entity_id);
+          const hold_action = JSON.parse(JSON.stringify(this._config.hold_action));
+          this.findAndReplace(hold_action, '[PRODUCT_ID]', entity.entity_id);
+          const double_tap_action = JSON.parse(JSON.stringify(this._config.double_tap_action));
+          this.findAndReplace(double_tap_action, '[PRODUCT_ID]', entity.entity_id);
+          const entityCardConfig = {
+            type: 'custom:button-card',
+            entity: entity.entity_id,
+            icon: this._config.icon,
+            tap_action: tap_action,
+            hold_action: hold_action,
+            double_tap_action: double_tap_action,
+            styles: {
+              grid: [
+                { 'grid-template-rows': '1fr' },
+                { 'grid-template-areas': "'i n qty_in_list'" },
+                { 'grid-template-columns': 'min-content 1fr min-content' },
+              ],
+              card: [{ padding: 'calc(var(--bs-gutter-x) * 0.5)' }],
+              icon: [{ padding: '8px' }, { width: '24px' }, { height: '24px' }],
+              name: [
+                { 'align-self': 'center' },
+                { 'text-align': 'left' },
+                { width: '100%' },
+                { 'margin-left': '46px' },
+                { 'margin-right': '38px' },
+                { 'font-size': '1rem' },
+                { 'white-space': 'nowrap' },
+                { overflow: 'hidden' },
+                { 'text-overflow': 'ellipsis' },
+              ],
+              custom_fields: {
+                qty_in_list: [
+                  { 'align-self': 'center' },
+                  { 'justify-self': 'start' },
+                  { padding: 'calc(var(--bs-gutter-x) * 0.5)' },
+                  { 'padding-left': '8px' },
+                ],
+              },
+            },
+            custom_fields: {
+              qty_in_list:
+                "[[[ if ('list_" +
+                this._config.shopping_list_id +
+                "_qty' in entity.attributes) return `${entity.attributes.list_" +
+                this._config.shopping_list_id +
+                "_qty}`; else return '0'; ]]]",
+            },
+          };
+          group_cards.push(entityCardConfig);
+        });
+
+        const groupCardConfig = {
+          type: 'custom:collapsable-cards',
+          title: group_name,
+          defaultOpen: default_open,
+          cards: [
+            {
+              type: 'vertical-stack',
+              cards: group_cards,
+            },
+          ],
+        };
+        entities.push(groupCardConfig);
+        default_open = false;
+      });
+      return entities;
+    }
+
     Object.values(productArray).map((value) => {
       const entity = value[1] as ProductConfig;
       const tap_action = JSON.parse(JSON.stringify(this._config.tap_action));
