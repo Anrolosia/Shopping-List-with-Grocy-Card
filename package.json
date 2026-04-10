@@ -1,6 +1,6 @@
 {
     "name": "shopping-list-with-grocy-card",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "Button card for Shopping List With Grocy",
     "source": "src/index.ts",
     "module": "dist/shopping-list-with-grocy-card.js",
