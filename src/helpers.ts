@@ -132,22 +132,6 @@ export interface ProductEntity {
   friendly_name: string;
 }
 
-/**
- * Resolves a dot-notation path against an object.
- * e.g. resolvePath({userfields: {foo: "1"}}, "userfields.foo") => "1"
- * Falls back to a direct key lookup for backward compatibility.
- */
-export const resolvePath = (obj: any, path: string): any => {
-  if (!obj || !path) return undefined;
-  const parts = path.split('.');
-  let current = obj;
-  for (const part of parts) {
-    if (current === null || current === undefined) return undefined;
-    current = current[part];
-  }
-  return current;
-};
-
 export const compare_deep = (a: any, b: any) => {
   if (a === b) return true;
   if (typeof a !== typeof b) return false;
@@ -178,7 +162,7 @@ export const get_products = (states, config, is_shopping_list = false) => {
     for (const [exclude_key, exclude_values] of Object.entries(config.exclude)) {
       for (const exclude_value of Object.values(exclude_values)) {
         productArray = productArray.filter(
-          ([, value]) => resolvePath((value as ProductConfig).attributes, exclude_key) !== exclude_value,
+          ([, value]) => (value as ProductConfig).attributes[exclude_key] !== exclude_value,
         );
       }
     }
@@ -187,18 +171,18 @@ export const get_products = (states, config, is_shopping_list = false) => {
     for (const [include_key, include_values] of Object.entries(config.include)) {
       for (const include_value of Object.values(include_values)) {
         productArray = productArray.filter(
-          ([, value]) => resolvePath((value as ProductConfig).attributes, include_key) === include_value,
+          ([, value]) => (value as ProductConfig).attributes[include_key] === include_value,
         );
       }
     }
   }
   productArray = sorter(productArray, config?.sort_by);
-  if (!is_shopping_list && config.hasOwnProperty('group_by') && config.group_by !== '') {
-    const grouped_by = [];
+  if (config.hasOwnProperty('group_by') && config.group_by !== '') {
+    const grouped_by: Record<string, ProductConfig[]> = {};
     Object.values(productArray).map((value) => {
       const entity = value[1] as ProductConfig;
       const group_by = config.group_by.trim();
-      if (entity.attributes[group_by]) {
+      if (entity.attributes && entity.attributes[group_by]) {
         if (!(entity.attributes[group_by] in grouped_by)) {
           grouped_by[entity.attributes[group_by]] = [];
         }
